@@ -17,9 +17,12 @@
   },
   "homepage": "https://github.com/voz-living/voz-living-p2p-chat#readme",
   "devDependencies": {
+    "babel-core": "^6.23.1",
     "babel-eslint": "^7.1.1",
+    "babel-loader": "^6.2.5",
     "babel-plugin-transform-class-properties": "^6.23.0",
     "babel-plugin-transform-decorators-legacy": "^1.3.4",
+    "babel-preset-es2015": "^6.22.0",
     "babel-preset-react": "^6.23.0",
     "babel-preset-stage-0": "^6.22.0",
     "eslint": "^3.16.1",

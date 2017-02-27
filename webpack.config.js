@@ -2,21 +2,13 @@
 const path = require('path');
 const fs = require('fs');
 const webpack = require('webpack');
-const CopyWebpackPlugin = require('copy-webpack-plugin');
 
-const isProduction = typeof process.env.PRODUCTION !== 'undefined';
-console.log((isProduction ? 'Production' : 'Test') + ' build ...');
-const distPath = isProduction ? './dist/compiled/' : './dist/chrome/';
 module.exports = {
-  devtool: isProduction ? 'nosources-source-map' : 'cheap-module-source-map',
-  entry: {
-    'voz-living': './app/bootstrap.js',
-    'background': './background/bootstrap.js',
-    'options': './options/root.js',
-  },
+  devtool: 'cheap-module-source-map',
+  entry: './app/bootstrap.js',
   output: {
-    path: path.join(__dirname, distPath),
-    filename: '[name].js'
+    path: path.join(__dirname, './'),
+    filename: 'script.js',
   },
   module: {
     rules: [
@@ -25,6 +17,28 @@ module.exports = {
         exclude: /node_modules/,
         use: [
           { loader: 'babel-loader' }
+        ],
+      },
+      {
+        test: /\.css|\.less$/,
+        use: ['style-loader', 'css-loader', 'less-loader']
+      },
+      {
+        test: /\.(eot|woff|woff2|ttf)(\?.*$|$)/,
+        use: [
+          { loader: 'base64-font-loader' },
+        ],
+      },
+      {
+        test: /\.(svg|png|jpg)(\?.*$|$)/,
+        use: [
+          {
+            loader: 'url-loader',
+            options: {
+              limit: 30000,
+              name: './assert/[name].[ext]',
+            },
+          },
         ],
       },
     ]
@@ -36,33 +50,4 @@ module.exports = {
     ],
     extensions: ['.js', '.json']
   },
-  plugins: [
-    new webpack.DllReferencePlugin({
-      context: '.',
-      manifest: require(distPath + 'common-manifest.json')
-    }),
-    new CopyWebpackPlugin([
-      {
-        from: path.join(__dirname, './manifest.json'),
-        to: 'manifest.json'
-      },
-      {
-        from: path.join(__dirname, './assert'),
-        to: './assert'
-      },
-      {
-        from: path.join(__dirname, './options/options.html'),
-        to: './options.html'
-      },
-      {
-        from: path.join(__dirname, './background/background.html'),
-        to: './background.html'
-      },
-    ]),
-  ].concat(isProduction ? [
-    new webpack.optimize.UglifyJsPlugin({
-        beautify: false,
-        comments: false,
-    }),
-  ]: [])
 };
